@@ -31,7 +31,7 @@ describe('demo api', () => {
     t += DEMO_INCOMING_DELAY_MS + 1;
     const second = await api.updates(first.latest);
     expect(second.messages).toHaveLength(1);
-    expect(second.messages[0]).toMatchObject({ name: 'Jordan Lee' });
+    expect(second.messages[0]).toMatchObject({ name: 'Riley Park', chatGuid: 'demo;-;riley' });
     expect((await api.updates(second.latest)).messages).toEqual([]);
   });
 

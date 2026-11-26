@@ -4,6 +4,8 @@ import type { Chat, Contact, Favorite, GatewayApi, Incoming, Message, Target, Up
 
 const MIN = 60_000;
 export const DEMO_INCOMING_DELAY_MS = 25_000;
+const DEMO_INCOMING = { chatGuid: 'demo;-;riley', name: 'Riley Park', isGroup: false, sender: 'Riley Park',
+  text: 'Running 10 minutes late for lunch, save me a seat!' } as const;
 const DEMO_TRANSCRIPT = 'On my way, see you in ten minutes';
 
 interface Thread { chat: Chat; messages: Message[] }
@@ -99,9 +101,9 @@ export function createDemoApi(now: () => number = () => Date.now()): GatewayApi 
       if (!incomingDelivered && now() - startedAt >= DEMO_INCOMING_DELAY_MS) {
         incomingDelivered = true;
         const at = now();
-        append('demo;-;jordan', { guid: 'j-new', fromMe: false, sender: 'Jordan Lee', text: 'Also grab some ice cream please!', at }, true);
-        messages.push({ chatGuid: 'demo;-;jordan', name: 'Jordan Lee', isGroup: false, sender: 'Jordan Lee',
-          text: 'Also grab some ice cream please!', at });
+        // From a chat the walkthrough doesn't open: a message for the thread you're reading refreshes it, no card.
+        append(DEMO_INCOMING.chatGuid, { guid: 'r-new', fromMe: false, sender: DEMO_INCOMING.sender, text: DEMO_INCOMING.text, at }, true);
+        messages.push({ ...DEMO_INCOMING, at });
       }
       const latest = Math.max(since, ...threads.map((th) => th.chat.lastAt));
       return { messages: messages.filter((m) => m.at > since), latest };
