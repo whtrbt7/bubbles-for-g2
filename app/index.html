@@ -23,7 +23,15 @@
   </head>
   <body>
     <h1>Bubbles for G2</h1>
-    <p class="sub">iMessage on your glasses, through your own Mac. Setup: run install.sh on the Mac, then paste the URL and token it prints.</p>
+    <p class="sub">iMessage on your glasses, through your own Mac.</p>
+    <div class="help" style="margin-bottom: 16px">
+      <strong>First time?</strong> Set up your Mac with the guide at
+      <a href="https://github.com/whtrbt7/bubbles-for-g2" style="color:#3ddc84">github.com/whtrbt7/bubbles-for-g2</a>.
+      On the Mac, run:<br />
+      <code style="font-size:12px">curl -fsSL https://raw.githubusercontent.com/whtrbt7/bubbles-for-g2/main/get.sh | bash</code><br />
+      then paste the URL and token it prints below.<br />
+      Using Claude Code? Tell it: "Install Bubbles for G2 by following AGENT_INSTALL.md from github.com/whtrbt7/bubbles-for-g2".
+    </div>
     <form id="settings" autocomplete="off">
       <label for="gw-url">Gateway URL</label>
       <input id="gw-url" type="url" inputmode="url" spellcheck="false" placeholder="https://your-mac.your-tailnet.ts.net:8443" />
