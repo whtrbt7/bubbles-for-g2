@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bubbles for G2</title>
+    <style>
+      :root { color-scheme: dark; font-family: -apple-system, system-ui, sans-serif; }
+      body { margin: 0; padding: 20px; background: #111312; color: rgba(255,255,255,.87); }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      .sub { color: rgba(255,255,255,.6); margin: 0 0 20px; font-size: 14px; }
+      label { display: block; font-size: 13px; color: rgba(255,255,255,.6); margin: 14px 0 6px; }
+      input { width: 100%; box-sizing: border-box; padding: 12px; font-size: 16px; border-radius: 10px;
+              border: 1px solid rgba(255,255,255,.12); background: #1a1d1b; color: inherit; }
+      button { margin-top: 18px; width: 100%; padding: 14px; font-size: 16px; border: 0; border-radius: 10px;
+               background: #3ddc84; color: #08140c; font-weight: 600; }
+      #status { margin: 16px 0; font-size: 14px; min-height: 20px; }
+      details { margin-top: 24px; }
+      summary { color: rgba(255,255,255,.6); font-size: 13px; }
+      pre { font-size: 11px; color: rgba(255,255,255,.6); white-space: pre-wrap; }
+      .help { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.5; }
+    </style>
+  </head>
+  <body>
+    <h1>Bubbles for G2</h1>
+    <p class="sub">iMessage on your glasses, through your own Mac. Setup: run install.sh on the Mac, then paste the URL and token it prints.</p>
+    <form id="settings" autocomplete="off">
+      <label for="gw-url">Gateway URL</label>
+      <input id="gw-url" type="url" inputmode="url" spellcheck="false" placeholder="https://your-mac.your-tailnet.ts.net:8443" />
+      <label for="gw-token">Gateway token</label>
+      <input id="gw-token" type="password" spellcheck="false" />
+      <button type="submit">Save &amp; connect</button>
+    </form>
+    <p id="status" role="status"></p>
+    <p class="help">
+      Glasses: swipe to move, tap to open, double-tap to go back.<br />
+      In a thread: tap to reply, hold to dictate. Sends wait 5 s; double-tap cancels.<br />
+      Your phone must be connected to Tailscale.
+    </p>
+    <details>
+      <summary>Activity log</summary>
+      <pre id="log"></pre>
+    </details>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

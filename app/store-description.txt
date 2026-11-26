@@ -1,0 +1,26 @@
+Read and send your iMessages from your G2 glasses, through your own Mac (BlueBubbles + the Bubbles gateway over Tailscale). Setup guide: SETUP.md in the download.
+
+ON THE GLASSES
+- Inbox: newest conversations first, unread marked with *. Scroll to "More..." for older chats.
+- Tap a chat to read it. Swipe up for older messages.
+- Favorites: tap the "> Favorites" row, or press and hold on the inbox.
+- Reply: tap in a chat for quick replies, or hold to dictate and release when done.
+- New message: "+ New message", then pick a favorite or say a name.
+- Sending waits 5 seconds. Double-tap to cancel.
+- New texts pop up while the app is open: tap to open, hold to reply, double-tap to dismiss.
+- Double-tap goes back. Double-tap on the first inbox page exits.
+
+WITH EVEN AI ("Hey Even")
+Set Even AI > Agent Configuration to your gateway's /v1/chat/completions URL and agent token. Then say:
+- "Read my messages" or "Any new texts" - your latest texts from the last day.
+- "What did Sam say" - your last 3 messages with that person.
+- "Text Sam I'm on my way" (also "message", "tell", "send a text to") - asks you to confirm first.
+- "Reply on my way" - replies to whoever texted you last, after you confirm.
+- "Send" (or "yes", "go ahead") - sends the waiting message.
+- "Cancel" (or "no") - drops it. Unconfirmed messages expire after 2 minutes.
+Nothing is ever sent without your spoken confirmation. Favorites can be called by first name.
+Other questions get this command list; switch Agent Configuration back to Even AI for general questions.
+
+Requires: a Mac running Messages and BlueBubbles, the Bubbles gateway, and Tailscale on your phone.
+
+Not affiliated with Apple or Even Realities.
