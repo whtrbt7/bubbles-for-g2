@@ -80,7 +80,7 @@ Tell the user:
 1. Make sure Tailscale is **on** on the iPhone.
 2. In the Even App, open Even Hub → install **Bubbles for G2** → open it on the phone.
 3. Enter the **Gateway URL** from step 4 and paste the **Gateway token** (on the clipboard; with Universal Clipboard it
-   pastes on the iPhone. To copy it again:
+   pastes on the iPhone for about 2 minutes only; "Gateway rejected the token" usually means it expired. To copy it again:
    `( set -a; . "$HOME/Library/Application Support/BubblesG2/config/env"; printf %s "$G2_MSG_TOKEN" ) | pbcopy`).
 4. Tap **Save & connect**. Expected status: `Gateway OK · Messages bridge up`.
 

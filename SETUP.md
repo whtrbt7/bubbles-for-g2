@@ -65,6 +65,8 @@ Options: `--with-whisper` adds dictation in languages other than English (+400 M
 1. In the Even App, install **Bubbles for G2** from Even Hub and open it on the phone.
 2. Paste the **Gateway URL** and **Gateway token** from step 4 → **Save & connect**.
    The status line should read *Gateway OK · Messages bridge up*.
+   Copying on the Mac and pasting on the iPhone (Universal Clipboard) only works for about 2 minutes. If you see
+   *Gateway rejected the token*, copy it again and paste right away; don't pick a saved password the keyboard suggests.
 3. Open Bubbles for G2 on the glasses.
 
 ## Using it
