@@ -1,7 +1,12 @@
 Read and send iMessage and SMS from your G2 glasses, through your own Mac. No cloud service: messages travel only between your iPhone, your Mac and your glasses.
 
+YOU NEED (all free)
+- A Mac that stays on, signed in to Messages
+- BlueBubbles Server on the Mac (bluebubbles.app) - lets the Mac read and send your texts
+- Tailscale on the Mac AND your iPhone, same account (tailscale.com) - private link between them
+
 SETUP (once, about 20 minutes): github.com/whtrbt7/bubbles-for-g2
-1. On your Mac: sign in to Messages, install BlueBubbles Server and Tailscale (the guide walks you through it).
+1. On your Mac: sign in to Messages, install BlueBubbles Server and Tailscale; on your iPhone, install Tailscale.
 2. In Terminal: curl -fsSL https://raw.githubusercontent.com/whtrbt7/bubbles-for-g2/main/get.sh | bash
 3. Open Bubbles for G2 on your phone and paste the URL and token the installer prints.
 Using Claude Code? Tell it to follow AGENT_INSTALL.md from the GitHub page.
