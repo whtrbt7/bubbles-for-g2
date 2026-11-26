@@ -19,6 +19,21 @@
       summary { color: rgba(255,255,255,.6); font-size: 13px; }
       pre { font-size: 11px; color: rgba(255,255,255,.6); white-space: pre-wrap; }
       .help { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.5; }
+      button.secondary { background: transparent; color: #3ddc84; border: 1px solid rgba(61,220,132,.5); margin-top: 10px; }
+      .banner { background: rgba(61,220,132,.12); border: 1px solid rgba(61,220,132,.35); border-radius: 10px;
+                padding: 10px 12px; font-size: 14px; }
+      h2 { font-size: 16px; margin: 28px 0 8px; }
+      #fav-list { list-style: none; padding: 0; margin: 0; }
+      #fav-list li { display: flex; align-items: center; gap: 8px; padding: 8px 0;
+                     border-bottom: 1px solid rgba(255,255,255,.08); }
+      #fav-list li span { flex: 1; }
+      #fav-list li.empty { color: rgba(255,255,255,.6); font-size: 14px; }
+      button.mini { width: 44px; height: 44px; margin: 0; padding: 0; font-size: 16px; background: #1a1d1b;
+                    color: inherit; border: 1px solid rgba(255,255,255,.12); }
+      #fav-results { list-style: none; padding: 0; margin: 6px 0 0; }
+      button.result { width: 100%; height: auto; margin: 6px 0 0; padding: 12px; text-align: left;
+                      background: #1a1d1b; color: inherit; font-weight: 400; }
+      #fav-note { font-size: 13px; color: rgba(255,255,255,.6); min-height: 18px; }
     </style>
   </head>
   <body>
@@ -40,6 +55,20 @@
       <button type="submit">Save &amp; connect</button>
     </form>
     <p id="status" role="status"></p>
+    <button type="button" id="demo" class="secondary">Try the demo (no Mac needed)</button>
+    <p id="demo-banner" class="banner" hidden>
+      Demo mode: sample conversations with made-up people. Nothing you send leaves your phone.
+      Enter your gateway URL and token above and tap Save &amp; connect to use your real messages.
+    </p>
+    <section id="favorites" hidden>
+      <h2>Favorites</h2>
+      <p class="help" style="margin-top:0">Shown on the glasses under "&gt; Favorites" (or hold on the inbox), in this order.</p>
+      <ol id="fav-list"></ol>
+      <label for="fav-search">Add a contact</label>
+      <input id="fav-search" type="search" placeholder="Search your contacts" autocomplete="off" spellcheck="false" />
+      <ul id="fav-results"></ul>
+      <p id="fav-note" role="status"></p>
+    </section>
     <p class="help">
       Glasses: swipe to move, tap to open, double-tap to go back.<br />
       In a thread: tap to reply, hold to dictate. Sends wait 5 s; double-tap cancels.<br />

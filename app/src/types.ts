@@ -55,6 +55,7 @@ export interface GatewayApi {
   config(): Promise<GatewayConfig>;
   chats(limit: number, offset?: number): Promise<Chat[]>;
   favorites(): Promise<Favorite[]>;
+  setFavorites(items: string[]): Promise<Favorite[]>; // contact names or addresses, in display order
   updates(since: number): Promise<Updates>;
   messages(chatGuid: string, limit: number, before?: number): Promise<Message[]>;
   contacts(query: string): Promise<Contact[]>;

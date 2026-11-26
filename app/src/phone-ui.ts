@@ -6,6 +6,7 @@ export interface PhoneSettings {
 export interface PhoneUi {
   setStatus(text: string): void;
   log(text: string): void;
+  setDemo(on: boolean): void;
 }
 
 const MAX_LOG_LINES = 30;
@@ -17,12 +18,16 @@ function el<T extends HTMLElement>(id: string): T {
 }
 
 /** Wires the phone-side settings form. Message content is never written to this log. */
-export function mountPhoneUi(initial: PhoneSettings, onSave: (s: PhoneSettings) => Promise<void>): PhoneUi {
+export function mountPhoneUi(initial: PhoneSettings, onSave: (s: PhoneSettings) => Promise<void>,
+  onDemo: () => Promise<void>): PhoneUi {
   const url = el<HTMLInputElement>('gw-url');
   const token = el<HTMLInputElement>('gw-token');
   const form = el<HTMLFormElement>('settings');
   const status = el<HTMLParagraphElement>('status');
   const logEl = el<HTMLPreElement>('log');
+  const demoButton = el<HTMLButtonElement>('demo');
+  const demoBanner = el<HTMLParagraphElement>('demo-banner');
+  demoButton.addEventListener('click', () => void onDemo());
   url.value = initial.url;
   token.value = initial.token;
   token.placeholder = initial.token ? '•••••• saved' : 'paste token';
@@ -34,6 +39,10 @@ export function mountPhoneUi(initial: PhoneSettings, onSave: (s: PhoneSettings) 
       const stamp = new Date().toLocaleTimeString();
       const lines = [`${stamp} ${text}`, ...(logEl.textContent ?? '').split('\n')].slice(0, MAX_LOG_LINES);
       logEl.textContent = lines.join('\n');
+    },
+    setDemo: (on) => {
+      demoBanner.hidden = !on;
+      demoButton.hidden = on;
     },
   };
 

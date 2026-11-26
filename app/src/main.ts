@@ -3,11 +3,14 @@ import { checkHealth, createGatewayApi } from './api';
 import { Controller } from './controller';
 import { GlassesDisplay, GlassesMic } from './glasses';
 import { isListSettleEcho, toInput } from './input';
+import { createDemoApi } from './demo';
+import { mountFavoritesEditor } from './favorites-ui';
 import { mountPhoneUi, type PhoneSettings } from './phone-ui';
 
 const DEFAULT_URL = ''; // each user enters their own Mac's gateway URL (printed by install.sh)
 const KEY_URL = 'bubblesg2.url';
 const KEY_TOKEN = 'bubblesg2.token';
+const KEY_MODE = 'bubblesg2.mode'; // 'demo' while the user is trying the demo
 
 async function main(): Promise<void> {
   const bridge = await waitForEvenAppBridge();
@@ -23,18 +26,34 @@ async function main(): Promise<void> {
   }
 
   const apiFor = (s: PhoneSettings) => (s.token ? createGatewayApi(s.url, s.token) : null);
+  const demoStored = (await bridge.getLocalStorage(KEY_MODE)) === 'demo';
+  const initialApi = demoStored ? createDemoApi() : apiFor(stored);
 
   const ui = mountPhoneUi(stored, async (next) => {
     await bridge.setLocalStorage(KEY_URL, next.url);
     await bridge.setLocalStorage(KEY_TOKEN, next.token);
+    await bridge.setLocalStorage(KEY_MODE, '');
+    ui.setDemo(false);
     ui.setStatus(await checkHealth(next.url));
-    controller.setApi(apiFor(next));
-  });
+    const api = apiFor(next);
+    favorites.setApi(api);
+    controller.setApi(api);
+  }, () => enterDemo());
+  const favorites = mountFavoritesEditor(ui.log);
+
+  async function enterDemo(): Promise<void> {
+    await bridge.setLocalStorage(KEY_MODE, 'demo');
+    const api = createDemoApi();
+    ui.setDemo(true);
+    ui.setStatus('Demo running on the glasses.');
+    favorites.setApi(api);
+    controller.setApi(api);
+  }
 
   const mic = new GlassesMic(bridge);
   const display = new GlassesDisplay(bridge, ui.log);
   const controller = new Controller({
-    api: apiFor(stored),
+    api: initialApi,
     display,
     mic,
     now: () => Date.now(),
@@ -44,7 +63,10 @@ async function main(): Promise<void> {
     },
     exit: () => void bridge.shutDownPageContainer(1),
     log: ui.log,
+    startDemo: () => void enterDemo(),
   });
+  ui.setDemo(demoStored);
+  favorites.setApi(initialApi);
 
   bridge.onEvenHubEvent((event) => {
     const pcm = event.audioEvent?.audioPcm;
@@ -60,7 +82,8 @@ async function main(): Promise<void> {
   });
   window.addEventListener('beforeunload', () => controller.shutdown());
 
-  ui.setStatus(stored.token ? await checkHealth(stored.url) : 'Paste the gateway token to pair.');
+  if (demoStored) ui.setStatus('Demo running on the glasses.');
+  else ui.setStatus(stored.token ? await checkHealth(stored.url) : 'Set up your Mac (link above), or try the demo.');
   await controller.start();
 }
 

@@ -3,7 +3,8 @@
 Read and send **iMessage and SMS** on **Even Realities G2** glasses, through a small gateway on **your own Mac**.
 No cloud service, no accounts with us: your messages go only between your iPhone, your Mac and your glasses.
 
-- Inbox with newest conversations first, favorites, and paging through older chats
+- Inbox with newest conversations first, favorites (pick and reorder them from the phone), and paging through older chats
+- Demo mode with made-up conversations, so you can try it before setting up your Mac
 - Read threads, reply with quick replies or **on-device dictation** (Parakeet, runs on your Mac)
 - New-message cards on the glasses while the app is open
 - 5-second cancellable send countdown, so nothing goes out by accident

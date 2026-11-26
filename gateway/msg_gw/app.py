@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from .agent import Agent, People, Person, completion, hud, last_user_text
 from .bluebubbles import BlueBubblesClient, BlueBubblesError
 from .config import Settings
-from .favorites import favorite_names, resolve_favorites
+from .favorites import FavoritesError, FavoritesStore, favorite_names, resolve_favorites
 from .shaping import (ContactBook, is_valid_address, is_valid_chat_guid, shape_chat, shape_incoming,
                       shape_message)
 from .stt import AudioError, SpeechService, decode_wav
@@ -36,24 +36,32 @@ class SendRequest(BaseModel):
 
 
 class ContactCache:
-    def __init__(self, client: BlueBubblesClient, favorites: tuple[str, ...] = ()) -> None:
+    """Contact cards (refreshed every few minutes) with favorite names applied on top."""
+
+    def __init__(self, client: BlueBubblesClient, favorites: FavoritesStore) -> None:
         self._client = client
         self._favorites = favorites
+        self._base = ContactBook.empty()
         self._book = ContactBook.empty()
+        self._applied: tuple[int, int] = (-1, -1)
         self._loaded_at = 0.0
+        self._generation = 0
         self._lock = asyncio.Lock()
 
     async def get(self) -> ContactBook:
-        if time.monotonic() - self._loaded_at < CONTACTS_TTL_S:
-            return self._book
-        async with self._lock:
-            if time.monotonic() - self._loaded_at >= CONTACTS_TTL_S:
-                try:
-                    book = ContactBook.from_contacts(await self._client.contacts())
-                    self._book = book.with_names(favorite_names(self._favorites, book))
-                    self._loaded_at = time.monotonic()
-                except BlueBubblesError:
-                    log.warning("Contact refresh failed; using previous contact book")
+        if time.monotonic() - self._loaded_at >= CONTACTS_TTL_S:
+            async with self._lock:
+                if time.monotonic() - self._loaded_at >= CONTACTS_TTL_S:
+                    try:
+                        self._base = ContactBook.from_contacts(await self._client.contacts())
+                        self._loaded_at = time.monotonic()
+                        self._generation += 1
+                    except BlueBubblesError:
+                        log.warning("Contact refresh failed; using previous contact book")
+        key = (self._generation, self._favorites.version)
+        if key != self._applied:
+            self._book = self._base.with_names(favorite_names(self._favorites.get(), self._base))
+            self._applied = key
         return self._book
 
 
@@ -96,7 +104,8 @@ class SendLimiter:
 
 
 def create_app(settings: Settings, bb: BlueBubblesClient, speech: SpeechService | None) -> FastAPI:
-    contacts = ContactCache(bb, settings.favorites)
+    favorites_store = FavoritesStore(settings.favorites, settings.favorites_file)
+    contacts = ContactCache(bb, favorites_store)
     chat_cache = ChatCache(bb)
     limiter = SendLimiter(settings.send_limit_per_min)
 
@@ -109,7 +118,7 @@ def create_app(settings: Settings, bb: BlueBubblesClient, speech: SpeechService 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(settings.allowed_origins),
-        allow_methods=["GET", "POST"],
+        allow_methods=["GET", "POST", "PUT"],
         allow_headers=["Authorization", "Content-Type"],
     )
 
@@ -158,7 +167,7 @@ def create_app(settings: Settings, bb: BlueBubblesClient, speech: SpeechService 
             all_chats = await chat_cache.get()
         except BlueBubblesError:
             all_chats = []
-        favorites = resolve_favorites(settings.favorites, book, all_chats)
+        favorites = resolve_favorites(favorites_store.get(), book, all_chats)
         return {"quickReplies": list(settings.quick_replies), "favorites": favorites,
                 "stt": speech.engines if speech else []}
 
@@ -168,7 +177,20 @@ def create_app(settings: Settings, bb: BlueBubblesClient, speech: SpeechService 
             all_chats = await chat_cache.get()
         except BlueBubblesError as exc:
             raise bb_failure(exc) from exc
-        return resolve_favorites(settings.favorites, await contacts.get(), all_chats)
+        return resolve_favorites(favorites_store.get(), await contacts.get(), all_chats)
+
+    @app.put("/favorites", dependencies=auth)
+    async def save_favorites(request: Request) -> list[dict[str, Any]]:
+        try:
+            body = await request.json()
+            favorites_store.set(body.get("items") if isinstance(body, dict) else None)
+        except (ValueError, FavoritesError) as exc:
+            raise HTTPException(400, str(exc) if isinstance(exc, FavoritesError) else "Invalid JSON") from exc
+        except OSError as exc:
+            log.warning("Saving favorites failed: %s", type(exc).__name__)
+            raise HTTPException(500, "Could not save favorites") from exc
+        log.info("Favorites updated (%d)", len(favorites_store.get()))
+        return await favorites()
 
     @app.get("/chats", dependencies=auth)
     async def chats(limit: int = Query(8, ge=1, le=25), offset: int = Query(0, ge=0, le=MAX_CHATS)) -> list[dict[str, Any]]:
@@ -190,7 +212,7 @@ def create_app(settings: Settings, bb: BlueBubblesClient, speech: SpeechService 
         try:
             all_chats = await chat_cache.get()
             book = await contacts.get()
-            people = People(book, resolve_favorites(settings.favorites, book, all_chats), all_chats)
+            people = People(book, resolve_favorites(favorites_store.get(), book, all_chats), all_chats)
             reply = await agent.handle(utterance, people, book, all_chats, int(time.time() * 1000))
         except BlueBubblesError as exc:
             log.warning("Agent BlueBubbles error: %s", exc)

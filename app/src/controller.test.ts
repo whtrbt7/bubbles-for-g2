@@ -44,6 +44,7 @@ function setup(overrides: Partial<GatewayApi> = {}) {
     config: vi.fn(async () => ({ quickReplies: ['On my way', 'Yes'], favorites: [{ name: 'Dave', address: '+15550001111', chatGuid: null, lastAt: 0 }], stt: ['parakeet'] })),
     chats: vi.fn(async () => [MOM]),
     favorites: vi.fn(async () => FAVS),
+    setFavorites: vi.fn(async () => FAVS),
     updates: vi.fn(async (since: number) => ({ messages: [], latest: Math.max(since, 100) })),
     messages: vi.fn(async () => MSGS),
     contacts: vi.fn(async () => [{ name: 'Lisa Wong', address: '+17325559999' }]),
@@ -83,6 +84,18 @@ describe('Controller', () => {
       log: () => undefined, display: { show: async (p) => { pages.push(p); } } });
     await c.start();
     expect(c.current.kind).toBe('setup');
+  });
+
+  it('tap on the not-connected screen starts the demo; double-tap exits', async () => {
+    const startDemo = vi.fn();
+    const exit = vi.fn();
+    const c = new Controller({ api: null, mic: h.mic, exit, now: () => 0, schedule: h.clock.schedule,
+      log: () => undefined, display: { show: async () => undefined }, startDemo });
+    await c.start();
+    c.handle({ kind: 'click', index: 0 });
+    expect(startDemo).toHaveBeenCalled();
+    c.handle({ kind: 'back' });
+    expect(exit).toHaveBeenCalled();
   });
 
   it('opens the inbox with a new-message row first', () => {

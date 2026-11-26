@@ -19,11 +19,13 @@ Mac**, over **your own private Tailscale network**. The developer never receives
 - **Sending:** text you confirm is passed to Messages on your Mac, which sends it as iMessage or SMS.
 - **Logs** (`~/Library/Logs/BubblesG2.log`) record events and sizes only, never message text, contact details,
   passwords or tokens.
+- **Favorites** you pick on the phone are saved on your Mac (`config/favorites.json`, readable only by your user).
 - **Secrets** (BlueBubbles password, gateway tokens) live in a file readable only by your macOS user.
 
 ## Data on your phone
 
-The Even App stores the gateway URL and token you enter, locally, so you don't re-enter them.
+The Even App stores the gateway URL and token you enter, locally, so you don't re-enter them. Demo mode uses built-in
+made-up conversations, stays on the phone and sends nothing.
 
 ## Third parties
 

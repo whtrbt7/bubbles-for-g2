@@ -76,8 +76,13 @@ Options: `--with-whisper` adds dictation in languages other than English (+400 M
 | New-message card | open the chat | dismiss | dictate a reply |
 | Send countdown (5 s) | | **cancel** | |
 
-**Favorites:** edit `G2_FAVORITES` in `~/Library/Application Support/BubblesG2/config/env`
-(comma-separated contact names, e.g. `G2_FAVORITES='Jordan Lee,Casey Lee'`), then re-run `install.sh`.
+**Favorites:** in the Even App, open Bubbles for G2 → **Favorites**. Search your contacts, tap **Add**, use ▲ to
+reorder and ✕ to remove (up to 15). Changes save to your Mac and show on the glasses right away (hold on the inbox).
+They are stored in `~/Library/Application Support/BubblesG2/config/favorites.json`. `G2_FAVORITES` in the env file is
+only the starting list, used until you first save from the phone.
+
+**Try it first:** before your Mac is set up, tap the glasses on the "Not connected" screen (or **Try the demo** on the
+phone page) to explore with made-up conversations. Nothing is sent in demo mode.
 
 ## Optional: "Hey Even" (Even AI)
 

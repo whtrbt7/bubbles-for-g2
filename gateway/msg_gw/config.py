@@ -32,6 +32,7 @@ class Settings:
     send_limit_per_min: int = 10
     max_text_len: int = 2000
     max_audio_seconds: int = 60
+    favorites_file: str = ""  # JSON list saved from the phone; overrides G2_FAVORITES once it exists
     agent_token: str = ""  # Even AI Agent Configuration token (separate from the app token)
 
 
@@ -54,5 +55,6 @@ def load_settings(env: dict[str, str] | None = None) -> Settings:
         whisper_dir=env.get("STT_WHISPER_DIR", ""),
         stt_threads=int(env.get("STT_THREADS", "4")),
         send_limit_per_min=int(env.get("G2_SEND_LIMIT_PER_MIN", "10")),
+        favorites_file=env.get("G2_FAVORITES_FILE", ""),
         agent_token=env.get("G2_AGENT_TOKEN", ""),
     )

@@ -23,6 +23,7 @@ export interface ControllerDeps {
   now: () => number;
   schedule: (fn: () => void, ms: number) => () => void; // returns cancel
   exit: () => void;
+  startDemo?: () => void; // tap on the not-paired screen starts demo mode
   log: (msg: string) => void;
 }
 
@@ -51,6 +52,8 @@ export class Controller {
   }
 
   setApi(api: GatewayApi | null): void {
+    this.stopWatching();
+    this.lastSeenAt = null; // new source: don't replay its history as notifications
     this.deps = { ...this.deps, api };
     void this.start();
   }
@@ -58,7 +61,7 @@ export class Controller {
   async start(): Promise<void> {
     const api = this.deps.api;
     if (!api) {
-      this.show({ kind: 'setup', note: 'Not paired yet. Open Bubbles for G2 on your phone and enter your gateway URL and token.' });
+      this.show({ kind: 'setup', note: 'Not connected to your Mac yet. Set it up from Bubbles for G2 on your phone, or tap to try the demo.' });
       return;
     }
     this.show({ kind: 'loading', note: 'Loading messages…' });
@@ -83,7 +86,10 @@ export class Controller {
     }
     const s = this.screen;
     switch (s.kind) {
-      case 'setup': return input.kind === 'back' ? this.deps.exit() : void this.start();
+      case 'setup':
+        if (input.kind === 'back') return this.deps.exit();
+        if (input.kind === 'click' && this.deps.startDemo) return this.deps.startDemo();
+        return void this.start();
       case 'loading': case 'transcribing': case 'sending': case 'sent':
         return input.kind === 'back' && s.kind === 'loading' ? this.deps.exit() : undefined;
       case 'error': return this.onError(s, input);

@@ -86,8 +86,9 @@ Tell the user:
 
 ## 7. Optional settings
 
-- **Favorites:** set `G2_FAVORITES` in `~/Library/Application Support/BubblesG2/config/env` to comma-separated contact
-  names exactly as in Contacts, single-quoted: `G2_FAVORITES='Jordan Lee,Casey Lee'`. Then re-run step 4.
+- **Favorites:** the user edits these on the phone (Bubbles for G2 page → Favorites). Do not edit
+  `config/favorites.json` yourself. `G2_FAVORITES` in `config/env` (comma-separated contact names, single-quoted:
+  `G2_FAVORITES='Jordan Lee,Casey Lee'`) only seeds the list before the first phone save; re-run step 4 after changing it.
 - **Even AI ("Hey Even"), Even Hub developer accounts only:** Even App → Settings → Even AI → Agent Configuration:
   URL = Gateway URL + `/v1/chat/completions`; token = `G2_AGENT_TOKEN` (copy it with the step 6 command, swapping the
   variable name).

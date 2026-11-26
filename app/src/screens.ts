@@ -79,7 +79,7 @@ function quoted(t: string): string {
 export function render(screen: Screen, now: number): PageSpec {
   switch (screen.kind) {
     case 'setup':
-      return text('Bubbles for G2', screen.note, 'Open Bubbles for G2 on your phone');
+      return text('Bubbles for G2', screen.note, 'tap: try demo   double-tap: exit');
     case 'loading':
       return text('Bubbles for G2', screen.note, '');
     case 'error':

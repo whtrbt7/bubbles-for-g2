@@ -50,6 +50,7 @@ export function createGatewayApi(baseUrl: string, token: string, fetchImpl: type
     config: () => call<GatewayConfig>('/config'),
     chats: (limit, offset = 0) => call<Chat[]>(`/chats?limit=${limit}&offset=${offset}`),
     favorites: () => call<Favorite[]>('/favorites'),
+    setFavorites: (items) => call<Favorite[]>('/favorites', { ...json({ items }), method: 'PUT' }),
     updates: (since) => call<Updates>(`/updates?since=${Math.max(0, Math.floor(since))}`),
     messages: (chatGuid, limit, before) => {
       const cursor = before ? `&before=${before}` : '';

@@ -5,11 +5,12 @@ SETUP (once, about 20 minutes): github.com/whtrbt7/bubbles-for-g2
 2. In Terminal: curl -fsSL https://raw.githubusercontent.com/whtrbt7/bubbles-for-g2/main/get.sh | bash
 3. Open Bubbles for G2 on your phone and paste the URL and token the installer prints.
 Using Claude Code? Tell it to follow AGENT_INSTALL.md from the GitHub page.
+Not set up yet? Tap the glasses on the first screen to try a demo with made-up conversations.
 
 ON THE GLASSES
 - Inbox: newest first, unread marked *, "More..." for older chats.
 - Tap a chat to read it; swipe up for older messages.
-- Favorites: "> Favorites" row, or press and hold on the inbox.
+- Favorites: "> Favorites" row, or press and hold on the inbox. Pick and reorder them on the phone page.
 - Reply: tap for quick replies, or hold to dictate (speech-to-text runs on your Mac).
 - Every send waits 5 seconds. Double-tap to cancel.
 - New texts pop up while the app is open: tap to open, hold to reply, double-tap to dismiss.
