@@ -31,6 +31,9 @@
       button.mini { width: 44px; height: 44px; margin: 0; padding: 0; font-size: 16px; background: #1a1d1b;
                     color: inherit; border: 1px solid rgba(255,255,255,.12); }
       #fav-results { list-style: none; padding: 0; margin: 6px 0 0; }
+      /* room to scroll the search box to the top so results sit above the keyboard */
+      #favorites:focus-within, #fav-results:not(:empty) { padding-bottom: 45vh; }
+      #fav-search { scroll-margin-top: 40px; }
       button.result { width: 100%; height: auto; margin: 6px 0 0; padding: 12px; text-align: left;
                       background: #1a1d1b; color: inherit; font-weight: 400; }
       #fav-note { font-size: 13px; color: rgba(255,255,255,.6); min-height: 18px; }
@@ -70,7 +73,7 @@
       <p class="help" style="margin-top:0">Shown on the glasses under "&gt; Favorites" (or hold on the inbox), in this order.</p>
       <ol id="fav-list"></ol>
       <label for="fav-search">Add a contact</label>
-      <input id="fav-search" type="search" placeholder="Search your contacts" autocomplete="off" spellcheck="false" />
+      <input id="fav-search" type="search" enterkeyhint="search" placeholder="Search your contacts" autocomplete="off" spellcheck="false" />
       <ul id="fav-results"></ul>
       <p id="fav-note" role="status"></p>
     </section>

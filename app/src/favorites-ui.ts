@@ -2,7 +2,9 @@
 import type { Contact, Favorite, GatewayApi } from './types';
 
 export const MAX_FAVORITES = 15;
+export const MAX_RESULTS = 8; // keeps the list short enough to see above the keyboard
 const SEARCH_DEBOUNCE_MS = 250;
+const KEYBOARD_SETTLE_MS = 300; // let iOS finish its own keyboard scroll first
 
 /** Pure list operations (unit-tested). */
 export const favOps = {
@@ -14,6 +16,16 @@ export const favOps = {
     const next = [...items];
     [next[index - 1], next[index]] = [next[index], next[index - 1]];
     return next;
+  },
+  /** Search hits worth showing: not already a favorite, one row per name, capped. */
+  results: (found: readonly Contact[], items: readonly string[]): Contact[] => {
+    const seen = new Set(items.map((n) => n.toLowerCase()));
+    return found.filter((c) => {
+      const key = c.name.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, MAX_RESULTS);
   },
 };
 
@@ -79,10 +91,13 @@ export function mountFavoritesEditor(log: (m: string) => void): FavoritesEditor 
   }
 
   function showResults(found: Contact[]): void {
-    results.replaceChildren(...found.map((c) => {
+    const shown = favOps.results(found, items);
+    setNote(shown.length ? '' : 'No matching contacts.');
+    results.replaceChildren(...shown.map((c) => {
       const li = document.createElement('li');
       const add = button(`+ ${c.name}`, `Add ${c.name} to favorites`, () => {
         search.value = '';
+        search.blur();
         results.replaceChildren();
         void save(favOps.add(items, c.name));
       });
@@ -90,7 +105,15 @@ export function mountFavoritesEditor(log: (m: string) => void): FavoritesEditor 
       li.append(add);
       return li;
     }));
+    if (document.activeElement === search) pinSearch();
   }
+
+  // iOS only scrolls a focused field just above the keyboard, which hides the results; pin the field to the top
+  // instead, and drop the keyboard as soon as the user starts scrolling the results or taps Search.
+  const pinSearch = () => search.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  search.addEventListener('focus', () => { window.setTimeout(pinSearch, KEYBOARD_SETTLE_MS); });
+  search.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); search.blur(); } });
+  results.addEventListener('touchstart', () => search.blur(), { passive: true });
 
   search.addEventListener('input', () => {
     window.clearTimeout(timer);

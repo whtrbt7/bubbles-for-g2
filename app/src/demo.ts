@@ -86,7 +86,7 @@ export function createDemoApi(now: () => number = () => Date.now()): GatewayApi 
     },
     contacts: async (query: string): Promise<Contact[]> => {
       const q = query.toLowerCase().split(' ')[0];
-      return threads.filter((th) => !th.chat.isGroup && th.chat.name.toLowerCase().includes(q))
+      return threads.filter((th) => !th.chat.isGroup && th.chat.guid !== 'demo;-;welcome' && th.chat.name.toLowerCase().includes(q))
         .map((th) => ({ name: th.chat.name, address: th.chat.guid }));
     },
     send: async (target: Target, text: string) => {

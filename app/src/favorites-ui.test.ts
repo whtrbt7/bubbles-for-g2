@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createDemoApi } from './demo';
-import { favOps, MAX_FAVORITES } from './favorites-ui';
+import { favOps, MAX_FAVORITES, MAX_RESULTS } from './favorites-ui';
 
 describe('favOps', () => {
   it('adds without duplicates and respects the maximum', () => {
@@ -16,6 +16,16 @@ describe('favOps', () => {
     expect(favOps.moveUp(items, 2)).toEqual(['A', 'C', 'B']);
     expect(favOps.moveUp(items, 0)).toEqual(['A', 'B', 'C']);
     expect(items).toEqual(['A', 'B', 'C']);
+  });
+});
+
+describe('favOps.results', () => {
+  it('skips people already in favorites, dedupes names and caps the list', () => {
+    const found = ['A', 'B', 'B', 'C', ...Array.from({ length: 20 }, (_, i) => `P${i}`)]
+      .map((name) => ({ name, address: `${name}@x` }));
+    const out = favOps.results(found, ['B']);
+    expect(out.map((c) => c.name).slice(0, 3)).toEqual(['A', 'C', 'P0']);
+    expect(out).toHaveLength(MAX_RESULTS);
   });
 });
 
